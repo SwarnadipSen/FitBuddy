@@ -4,7 +4,7 @@ FitBuddy is a FastAPI web app that uses Google Gemini models to create a persona
 
 ## Features
 
-- Generate a 7-day workout plan from user inputs (goal and intensity)
+- Generate a 7-day workout plan from user inputs (user_id, goal, intensity)
 - Regenerate plans based on feedback ("more cardio", "add rest days")
 - Goal-aligned nutrition or recovery tips
 - SQLite persistence for users, plans, and feedback
@@ -20,15 +20,19 @@ FitBuddy is a FastAPI web app that uses Google Gemini models to create a persona
 
 ## Project Structure
 
-- ai_service.py: Gemini integration and prompt handling
-- crud.py: database helper functions
-- database.py: SQLAlchemy engine, session, and Base
-- main.py: app startup and router wiring
-- models.py: ORM models (User, Plan, Feedback)
-- routes.py: all API and UI routes
-- schemas.py: Pydantic request and response models
-- templates/: HTML templates
-- static/: CSS styles
+- app/: application package
+- app/gemini_generator.py: workout plan generation (Gemini 1.5 Pro, plain-text prompt)
+- app/gemini_flash_generator.py: nutrition tip generation (Gemini Flash)
+- app/crud.py: database helper functions
+- app/database.py: SQLAlchemy engine, session, and Base
+- app/main.py: app startup and router wiring
+- app/models.py: ORM models (User, Plan, Feedback)
+- app/routes.py: all API and UI routes
+- app/updated_plan.py: feedback-based plan updater
+- app/nutrition.py: goal-based tips
+- app/schemas.py: Pydantic request and response models
+- app/templates/: HTML templates (index.html, plan.html, result.html, all_users.html)
+- app/static/: CSS styles
 - requirements.txt: dependencies
 
 ## Setup
@@ -44,13 +48,14 @@ pip install -r requirements.txt
 
 ```
 GEMINI_API_KEY=your_key_here
-GEMINI_MODEL=gemini-1.5-flash-002
+GEMINI_MODEL=gemini-1.5-pro-002
+GEMINI_FLASH_MODEL=gemini-1.5-flash-002
 ```
 
 4) Run the app:
 
 ```
-uvicorn main:app --reload
+uvicorn app.main:app --reload
 ```
 
 5) Open the UI:
@@ -69,6 +74,7 @@ Request body:
 
 ```
 {
+  "user_id": 101,
   "name": "Alex",
   "age": 24,
   "weight": 68,
@@ -83,20 +89,7 @@ Response body (example):
 {
   "id": 1,
   "user_id": 1,
-  "plan": {
-    "goal": "weight loss",
-    "intensity": "medium",
-    "days": [
-      {
-        "day": "Day 1",
-        "focus": "Full body",
-        "duration_minutes": 40,
-        "exercises": [
-          {"name": "Squats", "sets": 3, "reps": 12}
-        ]
-      }
-    ]
-  },
+  "plan": "Day 1:\nWarm-up: ...\nMain Workout: ...\nCooldown: ...\n...",
   "tip": "Aim for a small calorie deficit and include protein at every meal."
 }
 ```
@@ -109,7 +102,7 @@ Request body:
 
 ```
 {
-  "plan_id": 1,
+  "user_id": 101,
   "feedback": "Add more cardio on Day 2"
 }
 ```
@@ -129,22 +122,23 @@ GET /tips?goal=muscle%20gain
 ## UI Routes
 
 - GET /: main form page
-- POST /ui/generate: create a plan from form input
-- GET /ui/plan/{plan_id}: view the plan
-- POST /ui/feedback: send feedback and regenerate
+- POST /generate-workout: create a plan from form input
+- POST /submit-feedback: send feedback and regenerate
+- GET /view-all-users: admin view of all users
 
 ## Notes
 
-- Plans are stored as JSON strings in SQLite and returned as structured JSON.
-- Gemini output is expected as strict JSON. If parsing fails, a safe fallback plan is used.
-- You can change the model via `GEMINI_MODEL` in .env if your account supports a different model.
-- You can adjust the prompts or model in ai_service.py.
+- Plans are stored as plain text in SQLite and returned as formatted text.
+- Gemini output is plain text (not JSON). If anything fails, a safe fallback plan is used.
+- You can change the model via `GEMINI_MODEL` and `GEMINI_FLASH_MODEL` in .env if your account supports different models.
+- You can adjust prompts in app/gemini_generator.py and app/updated_plan.py.
+- Flash tips are controlled in app/gemini_flash_generator.py.
 
 ## Common Issues
 
 - GEMINI_API_KEY missing: set it in .env or your environment.
 - Form data error: install python-multipart with `pip install python-multipart`.
-- Gemini returns invalid JSON: the app falls back to a default plan.
+- Gemini returns empty output: the app falls back to a default plan.
 - SQLite database file is created automatically as fitbuddy.db.
 
 ## License

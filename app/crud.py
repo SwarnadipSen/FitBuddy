@@ -3,19 +3,32 @@ from datetime import datetime
 
 from sqlalchemy.orm import Session
 
-import models
-import schemas
+from . import models
+from . import schemas
 
 
-def create_user(db: Session, user_in: schemas.UserCreate) -> models.User:
-	user = models.User(
-		name=user_in.name.strip(),
-		age=user_in.age,
-		weight=user_in.weight,
-		goal=user_in.goal,
-		intensity=user_in.intensity,
+def upsert_user(db: Session, user_in: schemas.UserInput) -> models.User:
+	user = (
+		db.query(models.User)
+		.filter(models.User.external_id == user_in.user_id)
+		.first()
 	)
-	db.add(user)
+	if user:
+		user.name = user_in.name.strip()
+		user.age = user_in.age
+		user.weight = user_in.weight
+		user.goal = user_in.goal
+		user.intensity = user_in.intensity
+	else:
+		user = models.User(
+			external_id=user_in.user_id,
+			name=user_in.name.strip(),
+			age=user_in.age,
+			weight=user_in.weight,
+			goal=user_in.goal,
+			intensity=user_in.intensity,
+		)
+		db.add(user)
 	db.commit()
 	db.refresh(user)
 	return user
@@ -25,12 +38,18 @@ def get_user(db: Session, user_id: int) -> models.User | None:
 	return db.query(models.User).filter(models.User.id == user_id).first()
 
 
+def get_user_by_external_id(db: Session, user_id: int) -> models.User | None:
+	return db.query(models.User).filter(models.User.external_id == user_id).first()
+
+
+
 def create_plan(
 	db: Session, user: models.User, plan_payload: dict, tip: str | None
 ) -> models.Plan:
 	plan = models.Plan(
 		user_id=user.id,
-		plan_json=json.dumps(plan_payload),
+		original_plan=json.dumps(plan_payload),
+		updated_plan=None,
 		tip=tip,
 		created_at=datetime.utcnow(),
 		updated_at=datetime.utcnow(),
@@ -44,7 +63,7 @@ def create_plan(
 def update_plan(
 	db: Session, plan: models.Plan, plan_payload: dict, tip: str | None
 ) -> models.Plan:
-	plan.plan_json = json.dumps(plan_payload)
+	plan.updated_plan = json.dumps(plan_payload)
 	plan.tip = tip
 	plan.updated_at = datetime.utcnow()
 	db.commit()
@@ -63,6 +82,10 @@ def get_latest_plan_for_user(db: Session, user_id: int) -> models.Plan | None:
 		.order_by(models.Plan.created_at.desc())
 		.first()
 	)
+
+
+def get_all_users(db: Session) -> list[models.User]:
+	return db.query(models.User).order_by(models.User.created_at.desc()).all()
 
 
 def create_feedback(

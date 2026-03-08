@@ -3,13 +3,14 @@ from datetime import datetime
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 
-from database import Base
+from .database import Base
 
 
 class User(Base):
 	__tablename__ = "users"
 
 	id = Column(Integer, primary_key=True, index=True)
+	external_id = Column(Integer, nullable=False, index=True)
 	name = Column(String(100), nullable=False)
 	age = Column(Integer, nullable=False)
 	weight = Column(Integer, nullable=False)
@@ -25,7 +26,8 @@ class Plan(Base):
 
 	id = Column(Integer, primary_key=True, index=True)
 	user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-	plan_json = Column(Text, nullable=False)
+	original_plan = Column(Text, nullable=False)
+	updated_plan = Column(Text, nullable=True)
 	tip = Column(Text, nullable=True)
 	created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 	updated_at = Column(DateTime, default=datetime.utcnow, nullable=False)

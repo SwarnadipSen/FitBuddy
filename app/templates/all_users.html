@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FitBuddy Users</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="bg-orbit"></div>
+  <main class="plan-page">
+    <header class="plan-header">
+      <h1>All Users</h1>
+      <p class="plan-meta">List of stored users for admin view.</p>
+    </header>
+    <section class="tip-card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>User ID</th>
+              <th>Name</th>
+              <th>Age</th>
+              <th>Weight</th>
+              <th>Goal</th>
+              <th>Intensity</th>
+              <th>Original Plan</th>
+              <th>Updated Plan</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+            <tr>
+              <td>{{ user["user_id"] }}</td>
+              <td>{{ user["name"] }}</td>
+              <td>{{ user["age"] }}</td>
+              <td>{{ user["weight"] }}</td>
+              <td>{{ user["goal"] }}</td>
+              <td>{{ user["intensity"] }}</td>
+              <td><pre>{{ user["original_plan"] }}</pre></td>
+              <td><pre>{{ user["updated_plan"] }}</pre></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

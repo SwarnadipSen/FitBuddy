@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FitBuddy Plan Result</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="bg-orbit"></div>
+  <main class="plan-page">
+    <header class="plan-header">
+      <h1>FitBuddy Plan Result</h1>
+    </header>
+    <section class="tip-card">
+      <h2>Tip</h2>
+      <p>{{ tip }}</p>
+    </section>
+    <section class="tip-card">
+      <h2>Workout Plan</h2>
+      <pre class="plan-text">{{ plan }}</pre>
+    </section>
+    <section class="feedback">
+      <h2>Update plan with feedback</h2>
+      <form method="post" action="/submit-feedback">
+        <input type="hidden" name="user_id" value="{{ user_id }}" />
+        <textarea name="feedback" rows="3" placeholder="e.g., add yoga on Day 3" required></textarea>
+        <button type="submit">Update plan</button>
+      </form>
+    </section>
+  </main>
+</body>
+</html>

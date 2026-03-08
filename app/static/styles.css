@@ -156,43 +156,6 @@ h1, h2, h3 {
   box-shadow: 0 12px 24px rgba(244, 197, 66, 0.2);
 }
 
-.plan-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1.5rem;
-}
-
-.day-card {
-  background: var(--paper-strong);
-  border-radius: 16px;
-  padding: 1.2rem;
-  box-shadow: 0 12px 30px var(--shadow);
-  animation: riseIn 0.5s ease-out;
-}
-
-.day-card ul {
-  list-style: none;
-  padding: 0;
-  margin: 1rem 0 0;
-  display: grid;
-  gap: 0.8rem;
-}
-
-.ex-name {
-  font-weight: 600;
-}
-
-.ex-meta {
-  display: block;
-  color: var(--ink-soft);
-  font-size: 0.85rem;
-}
-
-.ex-notes {
-  color: var(--ink-soft);
-  font-size: 0.85rem;
-  margin-top: 0.3rem;
-}
 
 .feedback {
   margin-top: 2.5rem;
@@ -207,6 +170,40 @@ h1, h2, h3 {
   margin-bottom: 1rem;
 }
 
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+th, td {
+  border-bottom: 1px solid #e9e2d7;
+  padding: 0.65rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background: #fff5d6;
+}
+
+td pre {
+  white-space: pre-wrap;
+  margin: 0;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+}
+
+.plan-text {
+  white-space: pre-wrap;
+  margin: 0;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  color: var(--ink);
+}
+
 @keyframes floatIn {
   from {
     opacity: 0;
@@ -218,16 +215,6 @@ h1, h2, h3 {
   }
 }
 
-@keyframes riseIn {
-  from {
-    opacity: 0;
-    transform: translateY(15px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
 @keyframes fadeIn {
   from {

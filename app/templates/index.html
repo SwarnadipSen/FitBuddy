@@ -23,7 +23,11 @@
     </div>
     <div class="hero-card">
       <h2>Build my plan</h2>
-      <form class="plan-form" method="post" action="/ui/generate">
+      <form class="plan-form" method="post" action="/generate-workout">
+        <label>
+          User ID
+          <input type="number" name="user_id" min="1" placeholder="101" required />
+        </label>
         <label>
           Name
           <input type="text" name="name" placeholder="Alex" required />

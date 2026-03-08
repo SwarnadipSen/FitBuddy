@@ -1,10 +1,15 @@
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from database import Base, engine
-from routes import router
+
+from .database import Base, engine
+from .routes import router
 
 app = FastAPI(title="FitBuddy – AI Fitness Plan Generator")
-app.mount("/static", StaticFiles(directory="static"), name="static")
+
+base_dir = Path(__file__).resolve().parent
+app.mount("/static", StaticFiles(directory=base_dir / "static"), name="static")
 
 
 @app.on_event("startup")

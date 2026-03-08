@@ -19,28 +19,9 @@
       <p>{{ tip }}</p>
     </section>
 
-    <section class="plan-grid">
-      {% for day in plan["days"] %}
-      <article class="day-card">
-        <h3>{{ day["day"] }}</h3>
-        <p class="focus">{{ day["focus"] }} · {{ day["duration_minutes"] }} min</p>
-        <ul>
-          {% for ex in day["exercises"] %}
-          <li>
-            <span class="ex-name">{{ ex["name"] }}</span>
-            <span class="ex-meta">
-              {% if ex.get("sets") %}{{ ex["sets"] }} sets{% endif %}
-              {% if ex.get("reps") %} · {{ ex["reps"] }} reps{% endif %}
-              {% if ex.get("duration_minutes") %} · {{ ex["duration_minutes"] }} min{% endif %}
-            </span>
-            {% if ex.get("notes") %}
-              <div class="ex-notes">{{ ex["notes"] }}</div>
-            {% endif %}
-          </li>
-          {% endfor %}
-        </ul>
-      </article>
-      {% endfor %}
+    <section class="tip-card">
+      <h2>Workout Plan</h2>
+      <pre class="plan-text">{{ plan }}</pre>
     </section>
 
     <section class="feedback">

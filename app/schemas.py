@@ -6,7 +6,9 @@ GoalType = Literal["weight loss", "muscle gain", "general wellness"]
 IntensityType = Literal["low", "medium", "high"]
 
 
-class UserCreate(BaseModel):
+
+class UserInput(BaseModel):
+	user_id: int = Field(..., ge=1)
 	name: str = Field(..., min_length=1, max_length=100)
 	age: int = Field(..., ge=13, le=90)
 	weight: int = Field(..., ge=30, le=300)
@@ -14,42 +16,27 @@ class UserCreate(BaseModel):
 	intensity: IntensityType
 
 
-class UserResponse(UserCreate):
+class UserResponse(UserInput):
 	model_config = ConfigDict(from_attributes=True)
 
 	id: int
 
 
-class PlanDayExercise(BaseModel):
-	name: str
-	sets: Optional[int] = None
-	reps: Optional[int] = None
-	duration_minutes: Optional[int] = None
-	notes: Optional[str] = None
-
-
-class PlanDay(BaseModel):
-	day: str
-	focus: str
-	duration_minutes: int
-	exercises: List[PlanDayExercise]
-
-
-class PlanRequest(UserCreate):
+class PlanRequest(UserInput):
 	pass
 
 
 class PlanResponse(BaseModel):
 	id: int
 	user_id: int
-	plan: Dict[str, Any]
+	plan: str
 	tip: Optional[str] = None
 
 	model_config = ConfigDict(from_attributes=True)
 
 
 class FeedbackRequest(BaseModel):
-	plan_id: int
+	user_id: int = Field(..., ge=1)
 	feedback: str = Field(..., min_length=3, max_length=500)
 
 
